@@ -1,11 +1,9 @@
 <?php
     // Session Start
     session_start();
-//    session_destroy();
    include_once("../products/component.php");
    include_once("../database/connection.php");
    include_once("../database/getdata.php");
-   $con = connection();
 
 
    if(isset($_POST['add'])){
@@ -18,19 +16,9 @@
             echo "<script>alert('Product is already added in the cart!') </script>";
             // echo "<script>window.location ='../php/products.php'</script>";
        }else{
-         $pid = $_POST['productid'];
          $count = count($_SESSION['cart']);
          $item_array = array('product_id' => $_POST['productid']);
          $_SESSION['cart'][$count] = $item_array;
-
-         $query = "INSERT INTO cart(productid) VALUES($pid)";
-         if(mysqli_query($con,$query)){
-            echo "<p>RECORD SAVE</p>";
-         }
-         else{
-            echo "<p>RECORD NOT SAVE</p>";
-         }
-         
 
          print_r($_SESSION['cart']);
 
@@ -138,41 +126,25 @@
     <h2>Category</h2>
 </div>
 
-
-
 <div class="swiper category-slider">
 
 <div class="swiper-wrapper">
 
 <div class="swiper-slide slide">
 <div class="icons1">
-<?php  
-        $sql = "SELECT * FROM category WHERE category_product ='Helmet'";
-        $result_category = mysqli_query($con,$sql);
-        $row = mysqli_fetch_assoc($result_category);
-        
-        
-    ?>
-    <img src="<?php echo $row['category_img']; ?>" alt="">
+    <img src="../images/helmet.png" alt="">
     <div class="info">
-        <a href="../php/products.php?cid=<?php echo $row['id']; ?>"><?php echo $row['category_product'];?></a>
+        <a href="../products/helmet.php">Helmet</a>
       
     </div>
 </div>
 </div>
 
 <div class="swiper-slide slide">
-
     <div class="icons1">
-    <?php 
-        $sql = "SELECT * FROM category  WHERE category_product ='Grip'";
-        $result_category = mysqli_query($con,$sql);
-        $row = mysqli_fetch_assoc($result_category);
-        
-    ?>
-        <img src="<?php echo $row['category_img']; ?>" alt="">
+        <img src="../images/grip.png" alt="">
         <div class="info">
-          <a href="../php/products.php?cid=<?php echo $row['id']; ?>" ><?php echo $row['category_product']; ?></a>
+          <a href="#" data-filter = ".grip">Grip</a>
          
         </div>
     </div>
@@ -180,15 +152,9 @@
 
 <div class="swiper-slide slide">
     <div class="icons1">
-    <?php 
-        $sql = "SELECT * FROM category  WHERE category_product ='Gloves'";
-        $result_category = mysqli_query($con,$sql);
-        $row = mysqli_fetch_assoc($result_category);
-        
-    ?>
-        <img src="<?php echo $row['category_img']; ?>" alt="">
+        <img src="../images/glove.png" alt="">
         <div class="info">
-          <a href="../php/products.php?cid=<?php echo $row['id']; ?>" ><?php echo $row['category_product']; ?></a>
+          <a href="#" data-filter = ".gloves">Gloves</a>
         
         </div>
     </div>
@@ -196,64 +162,36 @@
 
 <div class="swiper-slide slide">
     <div class="icons1">
-    <?php 
-        $sql = "SELECT * FROM category  WHERE category_product ='Mirror'";
-        $result_category = mysqli_query($con,$sql);
-        $row = mysqli_fetch_assoc($result_category);
-        
-    ?>
-        <img src="<?php echo $row['category_img']; ?>" alt="">
+        <img src="../images/mirror.png" alt="">
         <div class="info">
-          <a href="../php/products.php?cid=<?php echo $row['id']; ?>" ><?php echo $row['category_product']; ?></a>
-        
+          <a href="#" data-filter = ".mirror">Mirror</a>
         </div>
     </div>
 </div>
 
 <div class="swiper-slide slide">
     <div class="icons1">
-    <?php 
-        $sql = "SELECT * FROM category  WHERE category_product ='Gear'";
-        $result_category = mysqli_query($con,$sql);
-        $row = mysqli_fetch_assoc($result_category);
-        
-    ?>
-        <img src="<?php echo $row['category_img']; ?>" alt="">
+        <img src="../images/gear.png" alt="">
         <div class="info">
-          <a href="../php/products.php?cid=<?php echo $row['id']; ?>" ><?php echo $row['category_product']; ?></a>
-        
+          <a href="#" data-filter = ".gear">Gear</a>
         </div>
     </div>
 </div>
 
 <div class="swiper-slide slide">
     <div class="icons1">
-    <?php 
-        $sql = "SELECT * FROM category  WHERE category_product ='Oil'";
-        $result_category = mysqli_query($con,$sql);
-        $row = mysqli_fetch_assoc($result_category);
-        
-    ?>
-        <img src="<?php echo $row['category_img']; ?>" alt="">
+        <img src="../images/oil.png" alt="">
         <div class="info">
-          <a href="../php/products.php?cid=<?php echo $row['id']; ?>" ><?php echo $row['category_product']; ?></a>
-        
+          <a href="#" data-filter = ".oil">Oil</a>
         </div>
     </div>
 </div>
 
 <div class="swiper-slide slide">
     <div class="icons1">
-    <?php 
-        $sql = "SELECT * FROM category  WHERE category_product ='Light'";
-        $result_category = mysqli_query($con,$sql);
-        $row = mysqli_fetch_assoc($result_category);
-        
-    ?>
-        <img src="<?php echo $row['category_img']; ?>" alt="">
+        <img src="../images/headlight.png" alt="">
         <div class="info">
-          <a href="../php/products.php?cid=<?php echo $row['id']; ?>" ><?php echo $row['category_product']; ?></a>
-        
+          <a href="#">Light</a>
         </div>
     </div>
 </div>
@@ -271,94 +209,41 @@
 
 <section class="products" id="products">
 
-    <h1 class="heading">All products</h1>
+    <h1 class="heading">Helmet</h1>
 
     <div class="box-container">
-        
     <?php 
-         error_reporting(E_ERROR | E_PARSE);
-         $cid = $_GET['cid'];
-       
-            if(!empty($cid)){
-
-            $sql1 = "SELECT * FROM products WHERE category_id = $cid";
-            $result1 = mysqli_query($con,$sql1);
-            while($row = mysqli_fetch_assoc($result1)){
-               
-           ?>
-           <div class="box">
-               <form action="../php/products.php" method="post">
-                  <!--<span class="discount">-10%</span>-->
-                   <div class="image">
-                       <img src="<?php echo $row['product_img']; ?>" alt="">
-                       <div class="icons">
-                           <a href="#" class="fas fa-heart"></a>
-                           <!--<a href="" class="cart-btn" name="add">add to cart</a>-->
-                           <button type="submit" name="add" class="cart-btn">Add to cart</button>
-                           <a href="#" class="fas fa-eye"></a>
-                           <input type="hidden" name="productid" value="<?php $pid = $row['product_id']; echo $pid;?>" class="inputValueText">
-                       </div>
-                   </div>
-                   <div class="content">
-                       <h3><?php echo $row['product_name']; ?></h3>
-                       <div class="stars">
-                       <i class="fas fa-star fa-2x"></i>
-                       <i class="fas fa-star fa-2x"></i>
-                       <i class="fas fa-star fa-2x"></i>
-                       <i class="fas fa-star fa-2x"></i>
-                       <i class="fas fa-star-half-alt fa-2x"></i>
+ 
+        $result = getHelmet();
+        while($row = mysqli_fetch_assoc($result)){
+        ?> 
+         <div class="box">
+            <form action="../php/products.php" method="post">
+               <!--<span class="discount">-10%</span>-->
+                <div class="image">
+                    <img src="<?php echo $row['product_img'];?>" alt="">
+                    <div class="icons">
+                        <a href="#" class="fas fa-heart"></a>
+                        <!--<a href="" class="cart-btn" name="add">add to cart</a>-->
+                        <button type="submit" name="add" class="cart-btn">Add to cart</button>
+                        <a href="#" class="fas fa-eye"></a>
+                        <input type="hidden" name="productid" value="$productid" class="inputValueText">
                     </div>
-                       <div class="price"> ₱ <?php echo $row['product_price']; ?> <span>₱ 2800</span> </div>
-                   </div>
-               </form>
-           </div>
-   
-          <?php  } ?>
-
-          <?php  }
-          else {
-            $sql1 = "SELECT * FROM products";
-            $result1 = mysqli_query($con,$sql1);
-            while($row = mysqli_fetch_assoc($result1)){
-               
-           ?>
-           <div class="box">
-               <form action="../php/products.php" method="post">
-                  <!--<span class="discount">-10%</span>-->
-                   <div class="image">
-                       <img src="<?php echo $row['product_img']; ?>" alt="">
-                       <div class="icons">
-                           <a href="#" class="fas fa-heart"></a>
-                           <!--<a href="" class="cart-btn" name="add">add to cart</a>-->
-                           <button type="submit" name="add" class="cart-btn">Add to cart</button>
-                           <a href="#" class="fas fa-eye"></a>
-                           <input type="hidden" name="productid" value="<?php echo $row['product_id']; ?>" class="inputValueText">
-                       </div>
-                   </div>
-                   <div class="content">
-                       <h3><?php echo $row['product_name']; ?></h3>
-                       <div class="stars">
-                       <i class="fas fa-star fa-2x"></i>
-                       <i class="fas fa-star fa-2x"></i>
-                       <i class="fas fa-star fa-2x"></i>
-                       <i class="fas fa-star fa-2x"></i>
-                       <i class="fas fa-star-half-alt fa-2x"></i>
-                    </div>
-                       <div class="price"> ₱ <?php echo $row['product_price']; ?> <span>₱ 2800</span> </div>
-                   </div>
-               </form>
-           </div>
-   
-          <?php  } ?>
-
-          <?php } ?>
-
-    
-        
-      
-  
-    
-  
+                </div>
+                <div class="content">
+                    <h3><?php echo $row['product_name'];?></h3>
+                    <div class="stars">
+                    <i class="fas fa-star fa-2x"></i>
+                    <i class="fas fa-star fa-2x"></i>
+                    <i class="fas fa-star fa-2x"></i>
+                    <i class="fas fa-star fa-2x"></i>
+                    <i class="fas fa-star-half-alt fa-2x"></i>
+                 </div>
+                    <div class="price"> ₱ <?php echo $row['product_price']; ?> <span>₱ 2800</span> </div>
+                </div>
+            </form>
+        </div>  
+    <?php }?>
        
 
     </div>

@@ -73,6 +73,40 @@ var swiper = new Swiper(".product-slider", {
     },
 });
 
+//category product slider
+var swiper = new Swiper(".category-slider", {
+  loop:true, 
+  grabCursor:true,
+  spaceBetween: 20,
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+      0: {
+        slidesPerView: 2,
+      },
+      640: {
+        slidesPerView: 3,
+      },
+      700: {
+        slidesPerView: 4,
+      },
+      1000: {
+        slidesPerView: 5,
+      },
+      1500: {
+        slidesPerView: 6,
+      },
+  },
+});
+
+
+
+
+
+
+
 //affiliated shop slider
 var swiper = new Swiper(".affiliated-slider", {
     loop:true, 

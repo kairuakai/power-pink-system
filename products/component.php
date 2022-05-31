@@ -34,6 +34,22 @@ END;
 
 }
 
+function category_component($category_icon){
+    $category_comp = <<<END
+        <div class="swiper-slide slide">
+        <div class="icons1">
+            <img src="$category_icon" alt="">
+            <div class="info">
+            <!-- <a href="#" data-filter = ".grip">Grip</a> -->
+            <button data-filter=".HandleGrip">Handle Grip</button>
+                </div>
+                </div>
+        </div>
+    END;
+    echo $category_comp;
+}
+
+
 
 
 //For preview images

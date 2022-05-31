@@ -1,3 +1,15 @@
+
+<?php
+    // Session Start
+    session_start();
+    // session_destroy();
+    // Connection
+    include_once("../products/component.php");
+    include_once("../database/connection.php");
+    include_once("../database/getdata.php");
+    $con = connection();
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -88,60 +100,100 @@
 	<h1>Shopping Cart</h1>
 
 	<div class="cart">
-		
+		<!-- Shopping Cart Fetch Data From Database -->
         <div class="items">
-			<div class="item">
-				<img src="../images/helmet/Evo GSX 3000 Matte Black Helmet.jpg">
-				<div class="item-info">
-					<h3 class="item-name">Evo GSX 3000 Matte Black Helmet</h3>
-					<h4 class="item-price">₱ 2500</h4>
-					<h4 class="item-offer">10%</h4>
-					<p class="item-quantity">Qnt: <input value="1" name="">
-					<p class="item-remove">
-						<i class="fa fa-trash" aria-hidden="true"></i>
-						<span class="remove">Remove</span>
-					</p>
-				</div>
-			</div>
-
-			<div class="item">
-				<img src="../images/gloves/black.jpg">
-				<div class="item-info">
-					<h3 class="item-name">Black Gloves</h3>
-					<h4 class="item-price">₱ 250</h4>
-					<p class="item-quantity">Qnt: <input value="1" name="">
-					<p class="item-remove">
-						<i class="fa fa-trash" aria-hidden="true"></i>
-						<span class="remove">Remove</span>
-					</p>
-				</div>
-			</div>
+                <?php 
+                error_reporting(E_ERROR | E_PARSE);
+                   $cid = $_GET['cid'];
+                   $total = 0;
+                    if(!empty($_SESSION['cart'])){
+                        $product_id = array_column($_SESSION['cart'],'product_id');
+                        // $product_id = array($_SESSION['cart'],'product_id');
+                        $sql = "SELECT * FROM products";
+                        $result = mysqli_query($con,$sql);
+    
+                    while($row = mysqli_fetch_assoc($result)){
+                        
+                        foreach($product_id as $pid){
+                            if($row['product_id'] == $pid){
+                                $total = $total + (int)$row['product_price'];
+                                ?>
+                                	<div class="item">
+                                     <img src="<?php echo $row['product_img']; ?>">
+                                    <div class="item-info">
+                                        <h3 class="item-name"><?php echo $row['product_name']; ?></h3>
+                                        <h4 class="item-price">₱ <?php echo $row['product_price']; ?></h4>
+                                        <!-- <h4 class="item-offer">10%</h4> -->
+                                        <p class="item-quantity">Qty: <input value="1" name="">
+                                        <p class="item-remove">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                            <span class="remove">Remove</span>
+                                        </p>
+                                    </div>
+                                </div>
+                          <?php } ?>   
+                       <?php } ?>
+                <?php } ?>          
+            <?php } else{
+                ?>
+                <div class="alert alert-primary" role="alert">
+                   <h2>Cart is empty</h2>
+                </div>
+            <?php } ?>
+			
 		</div>
 
         
-		<div class="cart-total">
-            <p>
-                <h4>ORDER SUMMARY</h4>
-            </p>
+            <div class="cart-total">
+                <p>
+                    <h4>ORDER SUMMARY</h4>
+                </p>
+                <p>
+                <?php 
+                    if(isset($_SESSION['cart'])){
+                        $count = count($_SESSION['cart']);
+                        echo "<span>Total Price </span>";
+                        ?>
+                        <span>₱ <?php echo $total; ?> </span>
+                  <?php }
+                    else{
+                        echo "<span>Total Price </span>";
+                        echo "<span>₱ 0 </span>";
+                    }
+                ?>
+                </p>
+                <!-- <p>
+                    <span>Total Price</span>
+                    <span>₱ 2700</span>
+                </p> -->
 
-			<p>
-				<span>Total Price</span>
-				<span>₱ 2700</span>
-			</p>
-			<p>
-				<span>Number of Items</span>
-				<span>2</span>
-			</p>
+                <!-- <p>
+                    <span>Number of Items</span>
+                    <span>2</span>
+                </p> -->
+                <p>
+                <?php 
+                    if(isset($_SESSION['cart'])){
+                        $count = count($_SESSION['cart']);
+                        echo "<span>Number of items</span>";
+                        echo "<span> $count </span>";
+                    }
+                    else{
+                        echo "<span>Number of items 0</span>";
+                    }
+                ?>
+                </p>
 
-			
-            <p>
-				<span>You Save</span>
-				<span>₱ 300</span>
-			</p>
-            
-			<a href="#">CHECKOUT</a>
-		</div>
-	</div>
+                
+                <p>
+                    <span>You Save</span>
+                    <span>₱ 300</span>
+                </p>
+                
+                <a href="#">CHECKOUT</a>
+            </div>
+    	
+    </div>
 </div>
 
 <!-- footer section starts  -->
