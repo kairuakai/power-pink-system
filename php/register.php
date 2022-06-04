@@ -1,20 +1,20 @@
 
 <!-- For User Registration -->
 <?php
+      session_start();
       include_once("../database/connection.php");
       $success = 0;
       $user = 0;
       $invalid = 0;
       $con = connection();
     
-      if(!isset($_SESSION)){
-        session_start();
-    }
+
     
     if($_SERVER["REQUEST_METHOD"]== "POST"){
         
         $regUsername = $_POST['regUsername'];
         $regEmail = $_POST['regEmail'];
+        $regPhone = $_POST['regPhone'];
         $regPassword = $_POST['regPassword'];
         $cregPassword = $_POST['cregPassword'];
 
@@ -31,7 +31,7 @@
         }
         else {
            if($regPassword === $cregPassword){
-            $reg = "INSERT INTO userregister (regUsername,regEmail,regPassword) VALUES ('$regUsername','$regEmail','$regPassword')";
+            $reg = "INSERT INTO userregister (regUsername,regEmail,regPhone,regPassword) VALUES ('$regUsername','$regEmail','$regPhone','$regPassword')";
             $result = mysqli_query($con,$reg);
             
           
@@ -98,31 +98,28 @@
                 <!-- Form for Registration -->
                 <form action="../php/register.php" method="POST">
                     <div class="input-field">
-                        <input type="text" placeholder="Enter your username" name="regUsername" required >
+                        <input type="text" placeholder="Enter your username" name="regUsername" required pattern=".{5,}" title="Five or more characters">
                         <i class="uil uil-user"></i>
                     </div>
                     <div class="input-field">
-                        <input type="text" placeholder="Enter your email" name="regEmail" required>
+                        <input type="email" placeholder="Enter your email" name="regEmail" required>
                         <i class="uil uil-envelope icon"></i>
                     </div>
                     <div class="input-field">
-                        <input type="password" class="password" placeholder="Create a password" name="regPassword" required>
-                        <i class="uil uil-lock icon"></i>
+                        <input type="tel" placeholder="Enter your phone number" name="regPhone" required  maxlength="11" pattern="[0-9]{3}[0-9]{4}[0-9]{4}" title="Format: 094-xxxx-xxxx">
+                        <i class="fa-solid fa-mobile-screen"></i>
                     </div>
                     <div class="input-field">
-                        <input type="password" class="password" placeholder="Confirm a password" name="cregPassword" required>
+                        <input type="password" class="password" placeholder="Create a password" name="regPassword"  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+                        <i class="uil uil-lock icon "></i>
+                        <i class="uil uil-eye-slash showHidePw"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" class="password" placeholder="Confirm a password" name="cregPassword" required  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
                         <i class="uil uil-lock icon"></i>
                         <i class="uil uil-eye-slash showHidePw"></i>
                     </div>
 
-                    <div class="checkbox-text">
-                        <div class="checkbox-content">
-                            <input type="checkbox" id="sigCheck">
-                            <label for="sigCheck" class="text">Remember me</label>
-                        </div>
-                        
-                        <a href="#" class="text">Forgot password?</a>
-                    </div>
 
                     <div class="input-field button">
                       <input type="submit" value="SIGN UP" name="submit"/>

@@ -8,6 +8,65 @@
     include_once("../database/connection.php");
     include_once("../database/getdata.php");
     $con = connection();
+
+     // ===== Check if username have access
+     if(empty($_SESSION['username'])){
+        echo "<script>window.location ='../php/login.php'</script>";
+    }
+
+
+    // TODO -------- Fix delete button
+    if(isset($_GET['action'])){
+        if($_GET['action'] == "delete"){
+            foreach($_SESSION['cart'] as $key => $value){
+                if($value['product_id'] == $_GET['id']){
+                    $row_del =(int)$_GET['id'];
+
+                    $delete_sql = "DELETE FROM cart WHERE productid =".$row_del;
+                    if(mysqli_query($con,$delete_sql)){
+                        unset($_SESSION['cart'][$key]);
+                        // echo "<script>alert('Product has been removed')</script>";
+                
+                         echo "<script>header('location:../php/cart.php')</script>";
+                    }
+                    else{
+                        echo "<script>alert('DELETE IN SQL FAILED')</script>";
+                        echo "<script>header('location:../php/home.php')</script>";
+                    }
+
+                }
+                else{
+                    // echo "<script>alert('Product has not been removed')</script>";
+                    echo "<script>header('location:../php/cart.php')</script>";
+                }
+            }
+        }
+      }  
+    
+      if(isset($_GET['action'])){
+            if($_GET['action']=="clearAll"){
+                // foreach($_SESSION['cart'] as $key => $value){
+                //     unset($_SESSION['cart'][$key]);
+                //     session_destroy();
+                // }
+                $delete_sql = "DELETE FROM cart";
+                if(mysqli_query($con,$delete_sql)){
+                    unset($_SESSION['cart']);
+                    // echo "<script>alert('Product has been removed')</script>";
+            
+                     echo "<script>header('location:../php/cart.php')</script>";
+                }
+                else{
+                    echo "<script>alert('DELETE IN SQL FAILED')</script>";
+                    echo "<script>header('location:../php/home.php')</script>";
+                }
+
+               
+               
+            }
+      }
+  
+
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +120,7 @@
         <div id="menu-btn" class="fas fa-bars"></div>
         <a href="../php/cart.php" class="fas fa-shopping-cart"></a>
         <div id="search-btn" class="fas fa-search"></div>
-        <a href="../php/login.php" class="fa-solid fa-user"></a>
+        <a href="../php/logout.php" class="fa-solid fa-user"></a>
 
     </div>
 
@@ -97,7 +156,21 @@
 <!--Cart-->
 <div class="container2">
     
-	<h1>Shopping Cart</h1>
+	<h1>Shopping Cart</h1> 
+    <p class="remove-all">
+        <i class="fa fa-trash" aria-hidden="true"></i>
+        <!-- REMINDER: Something wrong in this line fix it -->
+        <a href="../php/cart.php?action=clearAll"><span class="remove">Remove All</span></a>
+        <!-- <span class="remove">Remove</span> -->
+    </p>
+
+    <p class="see-order">
+        <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+        <!-- REMINDER: Something wrong in this line fix it -->
+        <a href="../php/view_order.php"><span class="remove"> View order</span></a>
+        <!-- <span class="remove">Remove</span> -->
+    </p>
+
 
 	<div class="cart">
 		<!-- Shopping Cart Fetch Data From Database -->
@@ -105,35 +178,60 @@
                 <?php 
                 error_reporting(E_ERROR | E_PARSE);
                    $cid = $_GET['cid'];
+                   $pid = $_POST['productid'];
                    $total = 0;
+                   $min = 1;
                     if(!empty($_SESSION['cart'])){
                         $product_id = array_column($_SESSION['cart'],'product_id');
+                       
                         // $product_id = array($_SESSION['cart'],'product_id');
-                        $sql = "SELECT * FROM products";
+                        // Product fetch data
+                        // $sql = "SELECT * FROM products";
+                        // $sql = "SELECT * FROM products INNER JOIN cart ON products.product_id=productid";
+                        $sql = "SELECT pr.*, ct.* FROM products pr, cart ct WHERE pr.product_id=ct.productid";
+                       
                         $result = mysqli_query($con,$sql);
-    
-                    while($row = mysqli_fetch_assoc($result)){
                         
+                    while($row = mysqli_fetch_assoc($result)){
                         foreach($product_id as $pid){
                             if($row['product_id'] == $pid){
-                                $total = $total + (int)$row['product_price'];
+                                // $quantity = $_SESSION['qty'];
+                                $total = $total + (int)$row['product_price'] * (int)$row['qty']; 
+                                $p_id = $row['productid'];
+                                $pname = $row['product_name'];
+                                $pprice = $row['product_price'];
+                                $pqty = $row['qty'];
+                                
                                 ?>
+                                <form action="" method="POST">
                                 	<div class="item">
                                      <img src="<?php echo $row['product_img']; ?>">
                                     <div class="item-info">
                                         <h3 class="item-name"><?php echo $row['product_name']; ?></h3>
+                                        <input type="hidden" name="pname" value="<?php echo $row['product_name']; ?>">
                                         <h4 class="item-price">₱ <?php echo $row['product_price']; ?></h4>
+                                        <input type="hiddne" name="pprice" value=" <?php echo $row['product_price']; ?>">
                                         <!-- <h4 class="item-offer">10%</h4> -->
-                                        <p class="item-quantity">Qty: <input value="1" name="">
+                                        <p class="item-quantity">Qty: <?php echo $row['qty']; ?></p>
+                                        <input type="hidden" name="pqty" value="<?php echo $row['qty']; ?>">
+                                        <!-- <a class="item-quantity"><input  type="submit" value="ADD" name="qty"></p> -->
                                         <p class="item-remove">
                                             <i class="fa fa-trash" aria-hidden="true"></i>
-                                            <span class="remove">Remove</span>
+                                            
+                                           <a href="../php/cart.php?action=delete&id=<?php echo $row['productid']; ?>"><span class="remove">Remove</span></a>
+                                           <input type="hidden" name="p_id" value="<?php echo $row['productid']; ?>">
+                                          <!-- <span class="remove">Remove</span> -->
                                         </p>
+                                        
                                     </div>
                                 </div>
-                          <?php } ?>   
+                                </form>
+                          <?php  } ?>   
+
                        <?php } ?>
-                <?php } ?>          
+
+                <?php } ?>    
+
             <?php } else{
                 ?>
                 <div class="alert alert-primary" role="alert">
@@ -145,52 +243,91 @@
 
         
             <div class="cart-total">
-                <p>
-                    <h4>ORDER SUMMARY</h4>
-                </p>
-                <p>
-                <?php 
-                    if(isset($_SESSION['cart'])){
-                        $count = count($_SESSION['cart']);
-                        echo "<span>Total Price </span>";
-                        ?>
-                        <span>₱ <?php echo $total; ?> </span>
-                  <?php }
-                    else{
-                        echo "<span>Total Price </span>";
-                        echo "<span>₱ 0 </span>";
-                    }
-                ?>
-                </p>
-                <!-- <p>
-                    <span>Total Price</span>
-                    <span>₱ 2700</span>
-                </p> -->
-
-                <!-- <p>
-                    <span>Number of Items</span>
-                    <span>2</span>
-                </p> -->
-                <p>
-                <?php 
-                    if(isset($_SESSION['cart'])){
-                        $count = count($_SESSION['cart']);
-                        echo "<span>Number of items</span>";
-                        echo "<span> $count </span>";
-                    }
-                    else{
-                        echo "<span>Number of items 0</span>";
-                    }
-                ?>
-                </p>
-
                 
-                <p>
-                    <span>You Save</span>
-                    <span>₱ 300</span>
-                </p>
-                
-                <a href="#">CHECKOUT</a>
+                <form action="../database/purchase.php" method="POST">
+                    <p>
+                        <h4>ORDER SUMMARY</h4>
+                    </p>
+                    <p>
+                    <?php 
+                        if(isset($_SESSION['cart'])){
+                            $count = count($_SESSION['cart']);
+                            echo "<span>Total Price </span>";
+                            // $total = $total;
+                            ?>
+                            <span>₱ <?php  echo $total; ?> </span>
+                            <input type="hidden" value="<?php  echo $total; ?>" name="total_price"> 
+                    <?php }
+                        else{
+                            echo "<span>Total Price </span>";
+                            echo "<span>₱ 0 </span>";
+                        }
+                    ?>
+
+                    
+                    </p>
+               
+                    <p>
+                    <?php 
+                        if(isset($_SESSION['cart'])){
+                            $count = count($_SESSION['cart']) - 1;
+                            if(!empty($count)){
+                                echo "<span>Number of items</span>";
+                                echo "<span> $count </span>";
+                            }
+                            
+                        }
+                        else{
+                            echo "<span>Number of items </span>";
+                            echo "<span>0</span>";
+                        }
+                    ?>
+                        <input type="hidden" value="<?php echo $count; ?>" name="number_item">
+                    </p>
+
+                    
+                    <p>
+                        <span><i class="fa-solid fa-location-dot"></i> Location</span>
+                        <span><input type="text" placeholder="Enter Address" required name="location" style="text-transform: none;"></span>
+                        <!-- <span><i class="fa-solid fa-location-dot"></i></span> -->
+                    </p>
+                    
+                    <p>
+                        <span><i class="fa-solid fa-envelope"></i></i> Email</span>
+                        <span><?php echo $_SESSION['useremail']; ?></span>
+                        <input type="hidden" name="email" value="<?php echo $_SESSION['useremail']; ?>">
+                    
+                    </p>
+
+                    <p>
+                        <span><i class="fa-solid fa-mobile-screen"></i> Phone number</span>
+                        <span><?php echo $_SESSION['userphone']; ?></span>
+                        <input type="hidden" name="phone_no" value="<?php echo $_SESSION['userphone']; ?>">
+                    
+                    </p>
+                  
+                    <p>
+                        <span><i class="fa-solid fa-calendar"></i> Date</span>
+                        <span>  <?php date_default_timezone_set('Asia/Manila'); $time_now = date("Y-m-d H:i"); echo $time_now; ?></span>
+                        <input type="hidden" name="date_time" value=" <?php   date_default_timezone_set('Asia/Manila'); $time_now = date("Y-m-d H:i"); echo $time_now; ?>">
+                    
+                    </p>
+
+                    <p>
+                        <span><i class="fa-solid fa-money-bill-wave"></i> Mode of Payment</span>
+                        <span>COD</span>
+                        <input type="hidden" name="paymode" value="COD">
+                    
+                    </p>
+                        <input type="hidden" name="user_id" value="<?php echo $_SESSION['usernameid']; ?>">
+                        <input type="hidden" name="p_id" value="<?php echo $p_id; ?>">
+                        <input type="hidden" name="pname" value="<?php echo $pname; ?>">
+                        <input type="hidden" name="pprice" value="<?php echo $pprice; ?>">
+                        <input type="hidden" name="pqty" value="<?php echo $pqty; ?>">
+                    
+                    <input type="submit" value="CHECKOUT" name="payorder" class="checkout">
+                </form>
+
             </div>
     	
     </div>
@@ -211,7 +348,7 @@
         <div class="box">
             <h3>contact informations</h3>
             <a href="#"> <i class="fas fa-phone"></i> 09123456789 </a>
-            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotrcyl@gmail.com </a>
+            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotorcyle@gmail.com </a>
         </div>
 
         <div class="box">

@@ -281,6 +281,7 @@ section {
     color: #FFC2F2;
     padding-top: .5rem;
     text-transform: uppercase;
+   
   }
   
   
@@ -419,6 +420,7 @@ section {
     font-size: 2rem;
     color:#444;
  }
+
 
  .container .products-container .product span{
     font-size: 1.5rem;

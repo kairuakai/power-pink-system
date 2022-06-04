@@ -1,3 +1,9 @@
+<?php 
+    session_start();
+    include_once("../database/connection.php");
+    $con = connection();
+?>
+
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -47,8 +53,9 @@
       <div id="menu-btn" class="fas fa-bars"></div>
       <a href="../php/cart.php" class="fas fa-shopping-cart"></a>
       <div id="search-btn" class="fas fa-search"></div>
-      <a href="../php/login.php" class="fa-solid fa-user"></a>
-
+      <a href="" class="fa-solid fa-user"></a>
+        <a href="" id="name-user"><?php echo $_SESSION['username']; ?></a>
+        <a href="../php/logout.php"><i class="fa-solid fa-right-from-bracket"></i></a>
   </div>
 
 </header>
@@ -95,7 +102,7 @@
                 <h3>Engine Overhaul</h3>
                 <p>Depending on the Engine</p>
                 <h3>₱ 100 - ₱ 1000</h3>
-                <a href="#" class="btn2">book now</a>
+                <a href="../php/form.php" class="btn2">book now</a>
             </div>
         </div>
 
@@ -107,7 +114,7 @@
                 <h3>Maintenance</h3>
                 <p>Depends on how many parts to fix</p>
                 <h3>₱ 250 - ₱ 2000</h3>
-                <a href="#" class="btn2">book now</a>
+                <a href="../php/form.php" class="btn2">book now</a>
             </div>
         </div>
         <div class="box">
@@ -118,7 +125,7 @@
                 <h3>Change Oil</h3>
                 <p>Depending on the Engine</p>
                 <h3>₱ 100 - ₱ 1000</h3>
-                <a href="#" class="btn2">book now</a>
+                <a href="../php/form.php" class="btn2">book now</a>
             </div>
         </div>
 
@@ -130,7 +137,7 @@
                 <h3>Wheel Allignment</h3>
                 <p>Depends on how many parts to fix</p>
                 <h3>₱ 250 - ₱ 2000</h3>
-                <a href="#" class="btn2">book now</a>
+                <a href="../php/form.php" class="btn2">book now</a>
             </div>
         </div>
 
@@ -142,7 +149,7 @@
                 <h3>Bike Washing</h3>
                 <p>Depending on the Engine</p>
                 <h3>₱ 100 - ₱ 1000</h3>
-                <a href="#" class="btn2">book now</a>
+                <a href="../php/form.php" class="btn2">book now</a>
             </div>
         </div>
         <div class="box">
@@ -153,7 +160,7 @@
                 <h3>Exhaust System Upgrade</h3>
                 <p>Depending on the Engine</p>
                 <h3>₱ 100 - ₱ 1000</h3>
-                <a href="#" class="btn2">book now</a>
+                <a href="../php/form.php" class="btn2">book now</a>
             </div>
         </div>
 
@@ -191,7 +198,7 @@
         <div class="box">
             <h3>contact informations</h3>
             <a href="#"> <i class="fas fa-phone"></i> 09123456789 </a>
-            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotrcyl@gmail.com </a>
+            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotorcyle@gmail.com </a>
         </div>
 
         <div class="box">

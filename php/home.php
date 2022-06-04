@@ -1,3 +1,17 @@
+<?php 
+    session_start();
+    // session_destroy();
+    include_once("../database/connection.php");
+    $con = connection();
+
+     // ===== Check if username have access
+     if(empty($_SESSION['username'])){
+        echo "<script>window.location ='../php/login.php'</script>";
+    }
+
+
+?>
+
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -47,8 +61,10 @@
         <div id="menu-btn" class="fas fa-bars"></div>
         <a href="../php/cart.php" class="fas fa-shopping-cart"></a>
         <div id="search-btn" class="fas fa-search"></div>
-        <a href="../php/login.php" class="fa-solid fa-user"></a>
 
+       <a href="" class="fa-solid fa-user"></a>
+        <a href="" id="name-user"><?php echo $_SESSION['username']; ?></a>
+        <a href="../php/logout.php"><i class="fa-solid fa-right-from-bracket"></i></a>
     </div>
 
 </header>
@@ -80,7 +96,7 @@
                     <div class="content">
                         <span>Motrocyle</span>
                         <h3>Parts and Accessories</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit unde ex molestias soluta consequatur saepe aliquam, excepturi delectus consequuntur minus!</p>
+                        <p>Offering different kinds of products and services for you. </p>
                         <a href="#" class="btn">Shop Now</a>
                     </div>
                 </div>
@@ -91,7 +107,7 @@
                     <div class="content">
                         <span>Convinient</span>
                         <h3>Services</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit unde ex molestias soluta consequatur saepe aliquam, excepturi delectus consequuntur minus!</p>
+                        <p>Fast purchase and booking.</p>
                         <a href="#" class="btn">Shop Now</a>
                     </div>
                 </div>
@@ -102,8 +118,8 @@
                     <div class="content">
                         <span>Affordable</span>
                         <h3>Products</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit unde ex molestias soluta consequatur saepe aliquam, excepturi delectus consequuntur minus!</p>
-                        <a href="#" class="btn">Shop Now</a>
+                        <p>We assure that you will pay a fair and affordable rate for our products and services</p>
+                        <a href="../php/products.php" class="btn">Shop Now</a>
                     </div>
                 </div>
             </div>
@@ -132,9 +148,9 @@
 
         <div class="content">
             <h3>Our Shop</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem cumque sit nemo pariatur corporis perspiciatis aspernatur a ullam repudiandae autem asperiores quibusdam omnis commodi alias repellat illum, unde optio temporibus.</p>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusantium ea est commodi incidunt magni quia molestias perspiciatis, unde repudiandae quidem.</p>
-            <a href="#" class="btn2">learn more</a>
+            <p>Power Pink Motorcycle is a physical shop as well as online shop to help our customers to choose what's convenient for them. Our services and products are both affordable and fair just for you. </p>
+            <p> Your reviews and concern are our priorities for us to further help making our shop more better to serve you. Check out our about us to learn more. </p>
+            <a href="../php/about.php" class="btn2">learn more</a>
         </div>
 
     </div>
@@ -365,7 +381,7 @@
     
     <div class="location-text">
         <strong>Visit Our Store</strong>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id officiis, ratione, non doloribus similique nam aliquam doloremque, ipsa neque voluptas at recusandae est cumque ipsum. Vel sint libero odit placeat?</p>
+        <p>Corner Block 1, Alley 27, Eastbank road<br> Baranggay San Andres,<br>Cainta Rizal</p>
     </div>
 </section>
 
@@ -384,7 +400,7 @@
         <div class="box">
             <h3>contact informations</h3>
             <a href="#"> <i class="fas fa-phone"></i> 09123456789 </a>
-            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotrcyl@gmail.com </a>
+            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotorcyle@gmail.com </a>
         </div>
 
         <div class="box">

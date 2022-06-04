@@ -100,6 +100,21 @@ section {
           box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
 }
 
+.header.active .navbar a {
+  color:black;
+  
+}
+
+.header.active .icons a {
+  color:black;
+  
+}
+.header.active .icons .fa-search{
+  color:black;
+  
+}
+
+
 .logo img{
   height: 100px;
   width: 100px;
@@ -124,7 +139,8 @@ section {
   margin-left: 2rem;
   font-size: 1.7rem;
   text-decoration: none;
-  color: #10221b;
+  /* color: #10221b; */
+  color: white;
 }
 
 .header .navbar a:hover {
@@ -144,7 +160,8 @@ section {
   margin-left: 2rem;
   text-decoration: none;
   cursor: pointer;
-  color: #10221b;
+  /* color: #10221b; */
+  color: white;
   position: relative;
 }
 .header .icons .badge{
@@ -168,7 +185,9 @@ section {
 .header #menu-btn {
   display: none;
 }
-
+.header #name-user {
+  display: inline-block;
+}
 /*Why Choose Us*/
 .headinghome{
   text-align: center;
@@ -643,6 +662,11 @@ color: #10221b;
 @media (max-width: 768px) {
   .header #menu-btn {
     display: inline-block;
+    color: black;
+  }
+  .header #name-user {
+    position: relative;
+    display: none;
   }
   .header .navbar {
     position: fixed;
@@ -732,7 +756,7 @@ color: #10221b;
     }
 }
 
-@media(max-width:500px){
+@media(max-width:400px){
     .category-container{
         display: grid;
         grid-template-columns: 1fr 1fr;

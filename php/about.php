@@ -1,3 +1,34 @@
+<?php 
+    session_start();
+    include_once("../database/connection.php");
+    $con = connection();
+
+     // ===== Check if username have access
+     if(empty($_SESSION['username'])){
+        echo "<script>window.location ='../php/login.php'</script>";
+    }
+
+
+    if(isset($_POST['submit'])){
+        $q_email = $_POST['q_email'];
+        $q_mess = $_POST['q_message'];
+
+        $q_sql = "INSERT INTO user_question(email,message) VALUES ('$q_email','$q_mess')";
+
+        if(mysqli_query($con,$q_sql)){
+            echo "<script>alert('Question Submitted');
+            window.location.href='../php/about.php';
+            </script>";
+        }else{
+            echo "<script>alert('Question Submitted');
+            window.location.href='../php/about.php';
+            </script>";
+        }
+
+    }
+
+
+?>
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -47,7 +78,10 @@
       <div id="menu-btn" class="fas fa-bars"></div>
       <a href="../php/cart.php" class="fas fa-shopping-cart"></a>
       <div id="search-btn" class="fas fa-search"></div>
-      <a href="../php/login.php" class="fa-solid fa-user"></a>
+      
+      <a href="" class="fa-solid fa-user"></a>
+        <a href="" id="name-user"><?php echo $_SESSION['username']; ?></a>
+        <a href="../php/logout.php"><i class="fa-solid fa-right-from-bracket"></i></a>
 
   </div>
 
@@ -128,8 +162,8 @@
 
     <div class="content">
         <h3>About Us</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Neque voluptates corrupti natus necessitatibus beatae voluptatibus, deserunt quo soluta minima libero laborum, corporis error esse vitae placeat blanditiis reiciendis vel? Minima.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident dicta doloremque placeat porro, ipsam quia at beatae atque odit iste?</p>
+        <p>Power Pink Motorcycle was founded by Asnny Pichampongan in 20??. Located in Corner Block 1, Alley 27, Eastbank road Baranggay San Andres,Cainta Rizal. Our company provides products and services to the ones who owned a motorcycle.</p>
+        <p>Customer service and happiness have always been our primary objectives. From the moment you contact us until your motorcycle is delivered, you will be met by kind, courteous personnel who will be happy to answer any questions you may have. You will always feel at ease about your delivery, whether want to check the progress of your delivery, or want to speak with the driver. We guarantee a hassle-free delivery and services whether you're shipping a new motorcycle part to your house or booking a service to us.</p>
         <a href="#" class="btn2">read more</a>
     </div>
 
@@ -141,14 +175,14 @@
 
     <div class="content">
         <h1 class="heading">inquire now</h1>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Laboriosam ipsam repellat nostrum esse officiis unde quisquam corporis doloremque adipisci similique!</p>
-        <form action="">
-            <input type="email" name="" placeholder="enter your email" id="" class="email">
+        <p>We're available to help answer any questions you may have. Please feel free to contact us at any time!</p>
+        <form method="POST">
+            <input type="email" name="q_email" placeholder="enter your email" id="" class="email"> <br>
+            <br>
+            <input type="text" name="q_message" placeholder="enter your message" id="" class="message"> <br><br>
+            <input type="submit" value="submit" name="submit" class="btn">
         </form>
-        <form action="">
-            <input type="email" name="" placeholder="enter your message" id="" class="email">
-        </form>
-        <input type="submit" value="submit" class="btn">
+        
     </div>
 
 </section>
@@ -169,7 +203,7 @@
         <div class="box">
             <h3>contact informations</h3>
             <a href="#"> <i class="fas fa-phone"></i> 09123456789 </a>
-            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotrcyl@gmail.com </a>
+            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotorcyle@gmail.com </a>
         </div>
 
         <div class="box">

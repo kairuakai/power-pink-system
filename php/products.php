@@ -7,23 +7,34 @@
    include_once("../database/getdata.php");
    $con = connection();
 
+    // ===== Check if username have access
+    if(empty($_SESSION['username'])){
+        echo "<script>window.location ='../php/login.php'</script>";
+    }
 
+
+    //======= Add to cart button function
    if(isset($_POST['add'])){
     // print_r($_POST['productid']);
+        $quan = $_POST['qty'];
+    // echo "<h1>QUANTITY ".$quan."</h1>";
     if(isset($_SESSION['cart'])){
       
-       $item =  array_column($_SESSION['cart'],"product_id");
+       $item =  array_column($_SESSION['cart'],"product_id","product_price");
        print_r($item);
        if(in_array($_POST['productid'],$item)){
             echo "<script>alert('Product is already added in the cart!') </script>";
             // echo "<script>window.location ='../php/products.php'</script>";
        }else{
          $pid = $_POST['productid'];
+         $quan = $_POST['qty'];
+         $prodprice = $_POST['prodprice'];
+         $uid = $_POST['uid'];
          $count = count($_SESSION['cart']);
-         $item_array = array('product_id' => $_POST['productid']);
+         $item_array = array('product_id' => $_POST['productid'],'product_price'=>$_POST['prodprice']);
          $_SESSION['cart'][$count] = $item_array;
 
-         $query = "INSERT INTO cart(productid) VALUES($pid)";
+         $query = "INSERT INTO cart(userid,productid,qty,productprice) VALUES($uid,$pid,$quan,$prodprice)";
          if(mysqli_query($con,$query)){
             echo "<p>RECORD SAVE</p>";
          }
@@ -39,12 +50,13 @@
      
 
     }else{
-        $item_array = array('product_id' => $_POST['productid']);
+        $item_array = array('product_id' => $_POST['productid'],'product_price'=>$_POST['prodprice']);
         $_SESSION['cart'][0] = $item_array;
         print_r($_SESSION['cart']);
     }
 
    }
+
    
 ?>
 
@@ -97,10 +109,12 @@
     <div class="icons">
         <div id="menu-btn" class="fas fa-bars"></div>
         
-        <a href="../php/cart.php" class="fas fa-shopping-cart"> <?php if(isset($_SESSION['cart'])){ $count = count($_SESSION['cart']); echo "<span class=\"badge badge-dark\">$count</span>";}else{echo "<span class=\"badge badge-dark\">0</span>";}?></a>
+        <a href="../php/cart.php" class="fas fa-shopping-cart"> <?php if(isset($_SESSION['cart'])){ $count = count($_SESSION['cart'])-1; echo "<span class=\"badge badge-dark\">$count</span>";}else{echo "<span class=\"badge badge-dark\">0</span>";}?></a>
         <div id="search-btn" class="fas fa-search"></div>
 
-        <a href="../php/login.php" class="fa-solid fa-user"></a>
+        <a href="" class="fa-solid fa-user"></a>
+        <a href="" id="name-user"><?php echo $_SESSION['username']; ?></a>
+        <a href="../php/logout.php"><i class="fa-solid fa-right-from-bracket"></i></a>
     </div>
 
 </header>
@@ -111,11 +125,15 @@
 
     <div id="close-search" class="fas fa-times"></div>
 
-    <form action="">
-        <input type="search" name="" placeholder="search here..." id="search-box">
-        <label for="search-box" class="fas fa-search"></label>
+    <form action="" method="GET">
+        <input type="text" name="search" placeholder="search here..." id="search-box" value="<?php if(isset($_GET['search'])){ echo $_GET['search'];} ?>">
+       <label for="search-box"> <input type="submit" value="search"></label>
     </form>
 </div>
+
+
+
+
 
 <!-- home section starts  -->
 
@@ -139,7 +157,7 @@
 </div>
 
 
-
+<!-- TODO ------ Fix the search filter -->
 <div class="swiper category-slider">
 
 <div class="swiper-wrapper">
@@ -156,6 +174,8 @@
     <img src="<?php echo $row['category_img']; ?>" alt="">
     <div class="info">
         <a href="../php/products.php?cid=<?php echo $row['id']; ?>"><?php echo $row['category_product'];?></a>
+        
+        
       
     </div>
 </div>
@@ -297,6 +317,7 @@
                            <button type="submit" name="add" class="cart-btn">Add to cart</button>
                            <a href="#" class="fas fa-eye"></a>
                            <input type="hidden" name="productid" value="<?php $pid = $row['product_id']; echo $pid;?>" class="inputValueText">
+                           <input type="hidden" name="uid" value="<?php echo $_SESSION['usernameid']; ?>" class="inputValueText">
                        </div>
                    </div>
                    <div class="content">
@@ -309,6 +330,10 @@
                        <i class="fas fa-star-half-alt fa-2x"></i>
                     </div>
                        <div class="price"> ₱ <?php echo $row['product_price']; ?> <span>₱ 2800</span> </div>
+                       <div class="quantity "> <input type="number" value="0" name="qty" style="font-size: 1.7rem; position:relative;  top: 0; background-color: #FFC2F2; text-align: center;  border-radius: 5px;" required min="1" maxlength="2" >
+                         <!-- <input type="text" min="1" maxlength="2" > -->
+                         </div>
+
                    </div>
                </form>
            </div>
@@ -333,6 +358,7 @@
                            <button type="submit" name="add" class="cart-btn">Add to cart</button>
                            <a href="#" class="fas fa-eye"></a>
                            <input type="hidden" name="productid" value="<?php echo $row['product_id']; ?>" class="inputValueText">
+                           <input type="hidden" name="uid" value="<?php echo $_SESSION['usernameid']; ?>" class="inputValueText">
                        </div>
                    </div>
                    <div class="content">
@@ -345,13 +371,72 @@
                        <i class="fas fa-star-half-alt fa-2x"></i>
                     </div>
                        <div class="price"> ₱ <?php echo $row['product_price']; ?> <span>₱ 2800</span> </div>
+                       <div class="price"> <input type="hidden" name="prodprice" value="<?php $p = $row['product_price']; echo $p;?>"></div>
+                   
+                         <div class="quantity "> <input type="number" value="0" name="qty" style="font-size: 1.7rem; position:relative;  top: 0; background-color: #FFC2F2; text-align: center;  border-radius: 5px;" required min="1" maxlength="2" >
+                         <!-- <input type="text" min="1" maxlength="2" > -->
+                         </div>
+                       
                    </div>
+                   
                </form>
            </div>
    
           <?php  } ?>
 
           <?php } ?>
+
+          <!-- Search Function -->
+          <?php 
+            if(isset($_GET['search'])){
+                $filter_values = $_GET['search'];
+                $search_query = "SELECT * FROM products WHERE CONCAT(product_name,product_type) LIKE '%$filter_values%'";
+                $search_run = mysqli_query($con,$search_query);
+
+                if(mysqli_num_rows($search_run)>0){
+                    
+                
+                    foreach($search_run as $row){  
+                    ?>
+                    <div class="box">
+                        <form action="../php/products.php" method="post">
+                           <!--<span class="discount">-10%</span>-->
+                            <div class="image">
+                                <img src="<?php echo $row['product_img']; ?>" alt="">
+                                <div class="icons">
+                                    <a href="#" class="fas fa-heart"></a>
+                                    <!--<a href="" class="cart-btn" name="add">add to cart</a>-->
+                                    <button type="submit" name="add" class="cart-btn">Add to cart</button>
+                                    <a href="#" class="fas fa-eye"></a>
+                                    <input type="hidden" name="productid" value="<?php $pid = $row['product_id']; echo $pid;?>" class="inputValueText">
+                                </div>
+                            </div>
+                            <div class="content">
+                                <h3><?php echo $row['product_name']; ?></h3>
+                                <div class="stars">
+                                <i class="fas fa-star fa-2x"></i>
+                                <i class="fas fa-star fa-2x"></i>
+                                <i class="fas fa-star fa-2x"></i>
+                                <i class="fas fa-star fa-2x"></i>
+                                <i class="fas fa-star-half-alt fa-2x"></i>
+                             </div>
+                                <div class="price"> ₱ <?php echo $row['product_price']; ?> <span>₱ 2800</span> </div>
+
+                                <div class="quantity "> <input type="number" value="0" name="qty" style="font-size: 1.7rem; position:relative;  top: 0; background-color: #FFC2F2; text-align: center;  border-radius: 5px;" required min="1" maxlength="2" >
+                                <!-- <input type="text" min="1" maxlength="2" > -->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+            
+                   <?php  } 
+                   }?>
+           <?php } 
+        //    else{
+        //      echo"<h1>Data not been seach</h1>";
+        //     }?>
+          
+      
 
     
         
@@ -379,7 +464,7 @@
         <div class="box">
             <h3>contact informations</h3>
             <a href="#"> <i class="fas fa-phone"></i> 09123456789 </a>
-            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotrcyl@gmail.com </a>
+            <a href="#"> <i class="fas fa-envelope"></i> powerpinkmotorcyle@gmail.com </a>
         </div>
 
         <div class="box">
@@ -419,7 +504,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <!-- Isotope Plugin -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
 </body>
 </html>

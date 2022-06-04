@@ -1,30 +1,35 @@
 
 <!-- For User Login -->
  <?php
+      session_start();
       include_once("../database/connection.php");
       $login = 0;
       $invalid_login = 0;
       $con = connection();
-    
-      if(!isset($_SESSION)){
-        session_start();
-    }
+
+  
     
     if($_SERVER["REQUEST_METHOD"]== "POST"){
         
         $username = $_POST['l_username'];
         $password = $_POST['l_password'];
+
+        $adminuser = $_POST['l_username'];
+        $adminpass = $_POST['l_password'];
        
 
         $sql = "SELECT * FROM userregister WHERE regUsername = '$username' && regPassword = '$password'";
         $result = mysqli_query($con,$sql);
-   
         $num = mysqli_num_rows($result);
-   
        
    
        //  Validating if they have an existing account
         if($num > 0){
+            $user_fetch = mysqli_fetch_assoc($result);   
+            $_SESSION['username'] = $user_fetch['regUsername']; 
+            $_SESSION['usernameid'] = $user_fetch['regID']; 
+            $_SESSION['useremail'] = $user_fetch['regEmail']; 
+            $_SESSION['userphone'] = $user_fetch['regPhone']; 
             $login = 1;
             // echo "<script type='text/javascript'> 
             // alert('Login Successfully');</script>";
@@ -37,6 +42,19 @@
             //   alert('Login failed');</script>";
            
         }
+
+        $sql_admin = "SELECT * FROM admin_login WHERE admin_name = '$adminuser' && admin_password = '$adminpass'";
+        $admin_result = mysqli_query($con,$sql_admin);
+
+        $num_result = mysqli_num_rows($admin_result);
+
+        if($num_result>0){
+            header('location:../admin/index.php');
+        }
+        else{
+            $invalid_login = 1;
+        }
+
    
     }
 
